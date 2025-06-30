@@ -22,7 +22,6 @@ export default function Register() {
 
     const { name, email, password, confirmPassword } = formData;
 
-    // Front-end validation
     if (!name || !email || !password || !confirmPassword) {
       setError('Please fill in all fields.');
       return;
@@ -42,14 +41,12 @@ export default function Register() {
     }
 
     try {
-      // Call backend to register user (role will default to 'user')
       const response = await axios.post(
         'http://localhost:5000/api/user/register',
         { username: name, email, password },
         { headers: { 'Content-Type': 'application/json' } }
       );
 
-      // On success, navigate to login
       alert('Registration successful! Please log in.');
       navigate('/login');
     } catch (err) {

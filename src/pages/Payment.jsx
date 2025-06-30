@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Payment() {
   const [selectedBike, setSelectedBike] = useState(null);
   const [hours, setHours] = useState(1);
+  const [paymentMethod, setPaymentMethod] = useState('khalti');
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Load Khalti script
     if (!document.getElementById('khalti-script')) {
       const script = document.createElement('script');
       script.id = 'khalti-script';
@@ -14,50 +18,106 @@ export default function Payment() {
       document.body.appendChild(script);
     }
 
-    // Load selected bike from localStorage
     const bikeData = localStorage.getItem('selectedBike');
     if (bikeData) {
       setSelectedBike(JSON.parse(bikeData));
     }
+
+    try {
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      console.log("🧠 User from localStorage:", storedUser);
+      if (storedUser && storedUser.email) {
+        setUser(storedUser);
+      } else {
+        console.warn('❌ User not logged in or missing email');
+      }
+    } catch (error) {
+      console.error('❌ Error reading user from localStorage:', error);
+    }
   }, []);
 
-  const handlePayment = () => {
-    if (!window.KhaltiCheckout) {
-      alert('Khalti is still loading. Please wait a moment.');
-      return;
+  const handlePlaceOrder = async (orderData) => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/orders/place', orderData);
+      return response.data.order;
+    } catch (error) {
+      console.error('❌ Order placement failed:', error);
+      alert('Order failed. Please try again.');
+      return null;
     }
+  };
 
+  const handlePayment = async () => {
     if (!selectedBike || hours < 1) {
       alert('Please select a valid bike and number of hours.');
       return;
     }
 
-    const totalAmount = selectedBike.price * hours * 100; // convert to paisa
+    if (!user?.email) {
+      alert('❌ You must be logged in to place an order.');
+      return;
+    }
 
-    const config = {
+    const totalAmount = selectedBike.price * hours;
+
+    const commonOrderData = {
+      userEmail: user.email, 
+      bikeId: selectedBike.id,
+      hours,
+      totalAmount,
+    };
+
+    if (paymentMethod === 'cod') {
+      const order = await handlePlaceOrder({
+        ...commonOrderData,
+        paymentMethod: 'cod',
+        status: 'pending',
+        paymentRef: null,
+      });
+      if (order) {
+        alert('✅ Order placed successfully with Cash on Delivery!');
+        localStorage.removeItem('selectedBike');
+        navigate('/user-dashboard');
+      }
+      return;
+    }
+
+    if (!window.KhaltiCheckout) {
+      alert('Khalti is still loading. Please wait a moment.');
+      return;
+    }
+
+    const checkout = new window.KhaltiCheckout({
       publicKey: 'test_public_key_dc74f6db5b87415a9c1037d0c71343e3',
       productIdentity: `bike-${selectedBike.id}`,
       productName: selectedBike.name,
       productUrl: 'http://localhost:5173/payment',
       eventHandler: {
-        onSuccess(payload) {
-          alert(`✅ Payment Successful!\nBike: ${selectedBike.name}\nHours: ${hours}\nAmount: NPR ${payload.amount / 100}\nReference: ${payload.idx}`);
-          // TODO: Save order to DB if needed
-          localStorage.removeItem('selectedBike');
+        onSuccess: async (payload) => {
+          const order = await handlePlaceOrder({
+            ...commonOrderData,
+            paymentMethod: 'khalti',
+            status: 'paid',
+            paymentRef: payload.idx,
+          });
+          if (order) {
+            alert(`✅ Payment Successful! Reference: ${payload.idx}`);
+            localStorage.removeItem('selectedBike');
+            navigate('/user-dashboard');
+          } else {
+            alert('❌ Order saving failed after payment.');
+          }
         },
-        onError(error) {
-          alert('❌ Payment failed or cancelled.');
-          console.error(error);
+        onError: (err) => {
+          alert('❌ Khalti payment failed.');
+          console.error(err);
         },
-        onClose() {
-          console.log('Payment widget closed');
-        },
+        onClose: () => console.log('Khalti widget closed'),
       },
       paymentPreference: ['KHALTI'],
-    };
+    });
 
-    const checkout = new window.KhaltiCheckout(config);
-    checkout.show({ amount: totalAmount });
+    checkout.show({ amount: totalAmount * 100 }); 
   };
 
   if (!selectedBike) {
@@ -90,6 +150,32 @@ export default function Payment() {
         />
       </div>
 
+      <div className="mb-4 text-left">
+        <label className="block font-medium mb-2">Payment Method:</label>
+        <div className="space-y-2">
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="khalti"
+              checked={paymentMethod === 'khalti'}
+              onChange={() => setPaymentMethod('khalti')}
+            />
+            Pay with Khalti
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="cod"
+              checked={paymentMethod === 'cod'}
+              onChange={() => setPaymentMethod('cod')}
+            />
+            Cash on Delivery (COD)
+          </label>
+        </div>
+      </div>
+
       <p className="mb-4 font-semibold">
         Total Amount: <span className="text-blue-700">NPR {selectedBike.price * hours}</span>
       </p>
@@ -98,7 +184,7 @@ export default function Payment() {
         onClick={handlePayment}
         className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition"
       >
-        Pay with Khalti
+        {paymentMethod === 'khalti' ? 'Pay with Khalti' : 'Place COD Order'}
       </button>
     </div>
   );

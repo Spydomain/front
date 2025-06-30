@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import { useNavigate } from 'react-router-dom';
-import { getBikesApi } from '../api/api'; // adjust path if needed
+import { getBikesApi } from '../api/api'; 
 
 export default function Homepage() {
   const navigate = useNavigate();
@@ -34,7 +34,6 @@ export default function Homepage() {
     <div className="p-6 max-w-6xl mx-auto">
       <h1 className="text-4xl font-bold text-center mb-8">Welcome to Bike Rental Nepal</h1>
 
-      {/* Slider */}
       <div className="mb-10">
         <Slider {...sliderSettings}>
           {bikes.map((bike) => (
@@ -43,7 +42,7 @@ export default function Homepage() {
               onClick={() => navigate('/bikes')}
               className="cursor-pointer px-2"
             >
-              {/* Aspect ratio box */}
+              
               <div className="relative w-full rounded-xl shadow overflow-hidden" style={{ paddingTop: '56.25%' }}>
                 <img
                   src={`http://localhost:5000/uploads/bikes/${bike.image}`}

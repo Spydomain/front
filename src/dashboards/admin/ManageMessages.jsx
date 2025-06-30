@@ -20,7 +20,7 @@ export default function ManageMessages() {
     if (!window.confirm('Are you sure you want to delete this message?')) return;
     try {
       await axios.delete(`http://localhost:5000/api/contact/${id}`);
-      fetchMessages(); // Refresh
+      fetchMessages(); 
     } catch (err) {
       console.error('Delete failed:', err);
     }

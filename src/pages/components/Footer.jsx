@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="bg-blue-600 text-white mt-auto">
       <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Company Info */}
+
         <div>
           <h2 className="text-xl font-semibold mb-2">Bike Rental Nepal</h2>
           <p className="text-sm">
@@ -13,7 +13,6 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* Quick Links */}
         <div>
           <h2 className="text-lg font-semibold mb-2">Quick Links</h2>
           <ul className="space-y-1 text-sm">
@@ -24,7 +23,6 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Contact Info */}
         <div>
           <h2 className="text-lg font-semibold mb-2">Contact Us</h2>
           <p className="text-sm">Email: support@bikerentalnepal.com</p>
@@ -33,7 +31,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Copyright */}
       <div className="text-center text-sm py-4 bg-blue-700">
         © {new Date().getFullYear()} Bike Rental Nepal. All rights reserved.
       </div>

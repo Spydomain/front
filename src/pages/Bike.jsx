@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getBikesApi } from '../api/api';  // make sure your api.js exports this function
+import { getBikesApi } from '../api/api';  
 
 export default function Bike() {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export default function Bike() {
             key={bike.id}
             className="border rounded-lg shadow-md p-4 hover:shadow-xl transition-shadow duration-300 flex flex-col"
           >
-            <img src={`http://localhost:5000/uploads/bikes/${bike.image}`} // adjust URL if deployed
+            <img src={`http://localhost:5000/uploads/bikes/${bike.image}`} 
             alt={bike.name}
             className="h-f"
           />

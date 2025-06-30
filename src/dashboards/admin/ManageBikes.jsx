@@ -19,7 +19,7 @@ export default function ManageBike({ refresh }) {
 
   useEffect(() => {
     fetchBikes();
-  }, [refresh]); // refetch on refresh prop change
+  }, [refresh]);
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this bike?')) return;
@@ -53,7 +53,7 @@ export default function ManageBike({ refresh }) {
               <td className="border px-4 py-2">{bike.name}</td>
               <td className="border px-4 py-2">{bike.price}</td>
               <td className="border px-4 py-2">
-              <img src={`http://localhost:5000/uploads/bikes/${bike.image}`} // adjust URL if deployedalt={bike.name}
+              <img src={`http://localhost:5000/uploads/bikes/${bike.image}`} 
               className="h-16"
               />
 

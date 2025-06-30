@@ -21,7 +21,6 @@ export default function Login({ setUser }) {
       return;
     }
 
-    // Basic email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError('Please enter a valid email address.');
@@ -40,7 +39,6 @@ export default function Login({ setUser }) {
         return;
       }
 
-      // Save token and user data to localStorage
       localStorage.setItem('token', data.token);
       const userData = { email, role: data.role };
       localStorage.setItem('user', JSON.stringify(userData));

@@ -33,7 +33,7 @@ export default function AdminLogin({ setUser }) {
         return;
       }
 
-      // Save token and user data to localStorage
+ 
       localStorage.setItem('token', data.token);
       const userData = { email, role: data.role };
       localStorage.setItem('user', JSON.stringify(userData));

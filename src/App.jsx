@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-
-// Layouts & Components
 import Header from './pages/components/Header';
 import Footer from './pages/components/Footer';
-
-// Pages
 import Homepage from './pages/Homepage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -13,8 +9,6 @@ import Contact from './pages/Contact';
 import Bike from './pages/Bike';
 import Payment from './pages/Payment';
 import AdminLogin from './pages/AdminLogin';
-
-// Dashboards & Admin Panel
 import AdminLayout from './layouts/AdminLayout';
 import ManageBike from './dashboards/admin/ManageBikes';
 import AddBike from './pages/components/AddBike';
@@ -51,7 +45,6 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Homepage />} />
 
-            {/* Login and Register */}
             <Route
               path="/login"
               element={
@@ -64,12 +57,9 @@ export default function App() {
             />
             <Route
               path="/register"
-              element={
-                isLoggedIn ? <Navigate to="/" replace /> : <Register />
-              }
+              element={isLoggedIn ? <Navigate to="/" replace /> : <Register />}
             />
 
-            {/* Admin Login */}
             <Route
               path="/admin-login"
               element={
@@ -85,7 +75,6 @@ export default function App() {
             <Route path="/bikes" element={<Bike />} />
             <Route path="/payment" element={<Payment />} />
 
-            {/* User Dashboard Route */}
             <Route
               path="/user-dashboard"
               element={
@@ -97,7 +86,17 @@ export default function App() {
               }
             />
 
-            {/* Admin Panel Routes */}
+            <Route
+              path="/user/bookings"
+              element={
+                isLoggedIn && !isAdmin ? (
+                  <MyBookings user={user} />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+
             <Route
               path="/admin/*"
               element={
@@ -112,12 +111,9 @@ export default function App() {
               <Route path="manage-bikes" element={<ManageBike />} />
               <Route path="add-bike" element={<AddBike />} />
               <Route path="manage-bookings" element={<ManageBookings />} />
-
-              <Route path="user-dashboard" element={<MyBookings />} />
               <Route path="manage-messages" element={<ManageMessages />} />
             </Route>
 
-            {/* Fallback */}
             <Route path="*" element={<h2>404 - Page Not Found</h2>} />
           </Routes>
         </main>

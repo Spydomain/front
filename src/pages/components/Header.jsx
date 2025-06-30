@@ -12,12 +12,12 @@ export default function Header({ user, setUser }) {
     navigate('/login');
   };
 
-  // Get role from user
   const role = user?.role;
+  const isAdmin = role === 'admin';
 
   return (
     <header className="bg-blue-600 text-white p-4 flex justify-between items-center">
-      <Link to="/">
+      <Link to={isAdmin ? "/admin/manage-bikes" : "/"}>
         <img
           src={logo}
           alt="Bike Rental Nepal Logo"
