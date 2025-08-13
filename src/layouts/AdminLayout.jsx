@@ -12,7 +12,7 @@ const AdminLayout = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
+      
       <aside className="w-64 bg-white shadow-md">
         <div className="p-4 text-2xl font-bold text-blue-600 border-b">
           Admin Panel
@@ -40,7 +40,7 @@ const AdminLayout = () => {
         </nav>
       </aside>
 
-      {/* Main content */}
+    
       <main className="flex-1 p-6 bg-white rounded shadow">
         <Outlet />
       </main>
